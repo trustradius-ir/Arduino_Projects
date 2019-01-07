@@ -17,7 +17,7 @@ int DigitalPinStep3 = 24;
 float KnownResistorStep3 = 1000; //Ohm
 
 int DigitalPinStep4 = 25;
-float KnownResistorStep4 = 500; //Ohm
+float KnownResistorStep4 = 100; //Ohm
 
 
 
@@ -37,8 +37,7 @@ float CalcBuffer = 0;
 
 void setup () 
 { 
-  Serial.begin (9600); 
-  Serial.println ("Measure resistance"); 
+  Serial.begin (9600);   
   Serial.println (); 
 
   pinMode(DigitalPinStep1, OUTPUT);  
@@ -74,6 +73,8 @@ void loop ()
   digitalWrite(DigitalPinStep4, LOW);  
 
   Serial.println("-----");
+
+  delay(10);
   
   //Step1  
   digitalWrite(DigitalPinStep1, HIGH);
@@ -85,8 +86,9 @@ void loop ()
     LastADCValue = ADCValue;
     LastTolerance = ToleranceValue;
     KnownResistor = KnownResistorStep1; 
-    digitalWrite(DigitalPinStep1, LOW);
   }
+  digitalWrite(DigitalPinStep1, LOW);
+  delay(10);
 
   //Step2  
   digitalWrite(DigitalPinStep2, HIGH);
@@ -98,8 +100,9 @@ void loop ()
     LastADCValue = ADCValue;
     LastTolerance = ToleranceValue;
     KnownResistor = KnownResistorStep2; 
-    digitalWrite(DigitalPinStep2, LOW);
   }  
+  digitalWrite(DigitalPinStep2, LOW);
+  delay(00);
 
   //Step3  
   digitalWrite(DigitalPinStep3, HIGH);
@@ -111,8 +114,10 @@ void loop ()
     LastADCValue = ADCValue;
     LastTolerance = ToleranceValue;
     KnownResistor = KnownResistorStep3; 
-    digitalWrite(DigitalPinStep3, LOW);
   }
+  digitalWrite(DigitalPinStep3, LOW);
+  delay(10);
+  
 
   //Step4  
   digitalWrite(DigitalPinStep4, HIGH);
@@ -123,8 +128,15 @@ void loop ()
   { 
     LastADCValue = ADCValue;
     LastTolerance = ToleranceValue;
-    KnownResistor = KnownResistorStep3; 
-    digitalWrite(DigitalPinStep4, LOW);
+    KnownResistor = KnownResistorStep4; 
+  }
+  digitalWrite(DigitalPinStep4, LOW);
+  delay(10);
+
+  if (LastADCValue == ADCMaxValue - 1 || LastTolerance >= (ADCMaxValue/2) - 5)
+  {
+    Serial.println("Canot Measure !!!");
+    goto endloop;
   }
     
   Serial.println("Result:");
@@ -144,7 +156,8 @@ void loop ()
 
   HighSideVoltage = (InputVoltage - LowSideVoltage) ;
   Serial.print("UnknownResistorVoltage:"); Serial.println(HighSideVoltage);  
-
+  
+  endloop:
   delay (2000);
 
 
